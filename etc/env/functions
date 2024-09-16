@@ -28,7 +28,6 @@ check_virtualenv() {
 
   $VENV_BIN/yq '.myvenv = "'`echo ${VENV:2:-13}`'"' $VAR_FILE |python3 -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read())))' > $VAR_FILE.tmp && mv $VAR_FILE.tmp $VAR_FILE && echo -e "DONE\n"
 
-  return 0
 }
 
 function fill_password_file {

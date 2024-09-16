@@ -16,6 +16,7 @@ KOLLA_EXTRA_OPTS=""
 SKIP_INIT="no"
 VENV="./`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`/bin/activate"
 PB_PATH=$PWD/etc/ansible/playbooks/
+PB_PATH_SED=etc\\/ansible\\/playbooks\\/
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
@@ -91,34 +92,47 @@ done
 
 echo -e "Check Commands...\n"
 
-case "$1" in
-  (initialize)
-        install_local_required_pckgs
-        check_virtualenv
-        [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
-        ;;
-  (fill-pwd)
-        fill_password_file
-        ;;
-  (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull)
-	ACTION=$1
-        run_kolla $1 "$KOLLA_EXTRA_OPTS"
-        ;;
-  (all|all-steps)
-        ## Rimane da testare se le KOLLA_EXTRA_OPTS funzionano correttamente per tutte le ACTION
-        [ "$SKIP_INIT" == "no" ] && install_local_required_pckgs && check_virtualenv
-        [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
-        for action in install-deps bootstrap-servers prechecks deploy post-deploy; do
-          echo -e "\n\n=== Start kolla-ansible $action ===\n\n"
-          run_kolla $action "$KOLLA_EXTRA_OPTS"
-        done
-        ;;
-  (pb)
-        [ "$2" == "ls" ] && ls -l $PB_PATH && echo 
-        ;;
-  (*)     
-        usage
-        exit 3
-        ;;
-esac
-
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    (initialize)
+          install_local_required_pckgs
+          check_virtualenv
+          [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
+          shift 1
+          ;;
+    (fill-pwd)
+          fill_password_file
+          shift 1
+          ;;
+    (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull)
+  	  ACTION=$1
+          run_kolla $1 "$KOLLA_EXTRA_OPTS"
+          shift 1
+          ;;
+    (all|all-steps)
+          ## Rimane da testare se le KOLLA_EXTRA_OPTS funzionano correttamente per tutte le ACTION
+          [ "$SKIP_INIT" == "no" ] && install_local_required_pckgs && check_virtualenv
+          [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
+          for action in install-deps bootstrap-servers prechecks deploy post-deploy; do
+            echo -e "\n\n=== Start kolla-ansible $action ===\n\n"
+            run_kolla $action "$KOLLA_EXTRA_OPTS"
+          done
+          shift 1
+          ;;
+    (pb)
+          for COMMANDS in initialize install-deps bootstrap-servers prechecks deploy post-deploy prune-images destroy reconfigure pull; do
+            [ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
+            if echo $ARGS | grep "$COMMANDS" 1> /dev/null; then
+              runpb "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*"
+            else
+              echo -e "\nYou can use 'pb' subcommands only with thise commands:\ninstall-deps \nbootstrap-servers \nprechecks \ndeploy \npost-deploy \nprune-images \ndestroy \nreconfigure \npull"
+              exit 1
+            fi
+          done
+          ;;
+    (*)     
+          usage
+          exit 3
+          ;;
+  esac
+done
