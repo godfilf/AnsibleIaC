@@ -17,10 +17,11 @@ SKIP_INIT="no"
 VENV="./`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`/bin/activate"
 PB_PATH=$PWD/etc/ansible/playbooks/
 
-source etc/env/functions
+source $PWD/etc/env/functions
+source $PWD/etc/env/usage
 
 SHORT_OPTS="i:t:sv"
-LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:"
+LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:"
 RAW_ARGS="$*"
 ARGS=$(getopt -o "${SHORT_OPTS}" -l "${LONG_OPTS}" --name "$0" -- "$@") || { usage >&2; exit 2; }
 
@@ -65,6 +66,10 @@ while [ "$#" -gt 0 ]; do
       (--include-dev)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --include-dev $2"
               shift 2
+              ;;
+      (--os)
+              OPENSTACK_RELEASE="$2"
+              UPPER_CONSTRAINTS="https://raw.githubusercontent.com/openstack/requirements/stable/$OPENSTACK_RELEASE/upper-constraints.txt"
               ;;
       (--help|-h)
               usage
