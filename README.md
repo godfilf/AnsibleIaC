@@ -20,3 +20,10 @@ L'obiettivo di questo script integrato è quello di poter lanciare in modo integ
   --> check if the specified pkgs are installed; 
   --> check if venv already exists, if not it will create it; 
   --> create a obj list with custom playbooks in et/ansible/playbooks;
+
+- il comando pb permette di specificare quale playbook custom lanciare:
+  --> ./mystack pb pippo,pluto install-deps
+
+  inserendolo più volte lo si esegue prima e/o dopo le varie action di kolla
+  --> ./mystack pb pippo install-deps pb pippo,pluto
+
