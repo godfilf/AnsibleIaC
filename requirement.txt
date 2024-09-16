@@ -1,0 +1,6 @@
+git+https://opendev.org/openstack/kolla-ansible@stable/2024.1
+#kolla-ansible == 18.1.0
+ansible-core>=2.15,<2.16.99
+python-openstackclient
+wheel
+yq

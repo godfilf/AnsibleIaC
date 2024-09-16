@@ -1,0 +1,114 @@
+function usage {
+    cat <<EOF
+Usage: $0 COMMAND [options]
+
+Options:
+    --fill                   Used only with 'initialize' and 'all-steps' commands. 
+                             Fill password file with random password
+
+    -s, --skip-initialize    Skip initialize step, during all-steps execution
+    -i, --inventory          Specify a different inventory file. Default 'etc/kolla/multinode'
+    -v, --verbose            Increase verbosity of ansible-playbook
+    -t, --tags <tags>        Only run plays and tasks tagged with these values
+
+
+
+Environment variables:
+    EXTRA_OPTS           Additional arguments to pass to ansible-playbook
+
+
+Commands:
+    initialize           Prepare the local system. It will install both the packages indicated in var.yaml file 
+                         and the virtualenv, if it does not already exist.
+
+    fill-pwd             Fill password file with random password
+    install-deps         Install Ansible Galaxy dependencies
+    bootstrap-servers    Bootstrap servers with kolla deploy dependencies
+    prechecks            Do pre-deployment checks for hosts
+    deploy               Deploy and start all kolla containers
+    post-deploy          Do post deploy on deploy node
+    all-steps | all      Do in order : 
+                           initialize; install-deps; bootstrap-servers; prechecks; deploy; post-deploy
+
+    prune-images         Prune orphaned Kolla images
+
+    destroy              Destroy Kolla containers, volumes and host configuration
+                             --include-images to also destroy Kolla images
+                             ## --include-dev to also destroy dev mode repos ## SPERIMENTALE! ancora non funziona
+
+    pull                 Pull all images for containers (only pulls, no running container changes)
+
+EOF
+}
+
+check_virtualenv() {
+  VENV=`find . |grep "./*/bin/activate$" || echo ""`
+  if ! [ -z $VENV ]; then
+    for i in $VENV; do COUNT=$((COUNT+1)); done
+    if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV\n"; fi
+  fi
+
+  if [ -f $VENV ] && ! [ -z $VENV ] ; then
+      echo -e "Virtual environment '$VENV' already exists. Aborting.\n"
+  else
+      VENV=./venv/bin/activate
+      echo "virtualenv is not installed. Installing..."
+      python3 -m venv `echo $VENV | cut -d"/" -f2`
+      echo -e "virtualenv installation complete. \nVENV name : $VENV\n"
+  fi
+
+  echo -e "\nInstall pip packages...\n"
+  
+  VENV_BIN="$(echo $VENV | cut -d"/" -f2)/bin"
+  $VENV_BIN/pip install -U pip
+  $VENV_BIN/pip install -c $UPPER_CONSTRAINTS -r requirement.txt
+
+  echo -en "\nConfiguring right venv path... "
+
+  $VENV_BIN/yq '.myvenv = "'`echo ${VENV:2:-13}`'"' $VAR_FILE |python3 -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read())))' > $VAR_FILE.tmp && mv $VAR_FILE.tmp $VAR_FILE && echo -e "DONE\n"
+
+  return 0
+}
+
+function fill_password_file {
+
+  echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE";
+  kolla-genpwd -p $CONF_DIR/$PASSWORD_FILE;
+
+}
+
+## Viene aperto il link 'vars.yaml' nella radice e legge la lista di pacchetti da installare come local prereq
+function install_local_required_pckgs {
+
+#source $VENV
+
+echo -en "\nLoad pkgs... "
+#PKGS="`$VENV_BIN/yq -r .pkgs $VAR_FILE | yq .[] |xargs `" && echo -e "DONE"
+PKGS="`awk '$1 == "-"{ if (key == "pkgs:") print $NF; next } {key=$1}' $VAR_FILE | xargs`"
+
+echo -e "\nInstalling needed OS PKGS... \n"
+for i in yum apt pkg dnf; do
+  if which $i 1> /dev/null; then 
+    $i -y install $PKGS
+  fi
+done
+
+echo -e "DONE"
+}
+
+
+function run_kolla {
+
+[ -e $VENV ] && source $VENV || { echo -e "\n## ERROR!!! ##\nCan't load VENV: $VENV \nYou have to run INITILIZE before to proceed...\n\nUsage:\n  $0 initialize\n\n"; exit 1; }
+
+if [ $1 == "post-deploy" ]; then CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
+
+EXTRA_OPTS=$ANSIBLE_EXTRA_OPTS   kolla-ansible $1 \
+    --inventory $INVENTORY \
+    --passwords $CONF_DIR/$PASSWORD_FILE \
+    --configdir $CONF_DIR \
+    --extra "node_custom_config=$CONF_DIR/config" \
+    --extra "CONFIG_DIR=$CUSTOM_CONF_DIR/" \
+    $2
+
+}

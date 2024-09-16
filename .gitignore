@@ -1,0 +1,3 @@
+venv/
+*.log
+etc/env/mystack_config.yaml
