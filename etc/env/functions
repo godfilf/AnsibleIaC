@@ -20,6 +20,10 @@ check_virtualenv() {
   $VENV_BIN/pip install -U pip
   $VENV_BIN/pip install -c $UPPER_CONSTRAINTS -r requirement.txt
 
+  echo -e "\nCreating list of custom playbooks..."
+
+  tunepb
+
   echo -en "\nConfiguring right venv path... "
 
   $VENV_BIN/yq '.myvenv = "'`echo ${VENV:2:-13}`'"' $VAR_FILE |python3 -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read())))' > $VAR_FILE.tmp && mv $VAR_FILE.tmp $VAR_FILE && echo -e "DONE\n"
@@ -36,8 +40,6 @@ function fill_password_file {
 
 ## Viene aperto il link 'vars.yaml' nella radice e legge la lista di pacchetti da installare come local prereq
 function install_local_required_pckgs {
-
-#source $VENV
 
 echo -en "\nLoad pkgs... "
 #PKGS="`$VENV_BIN/yq -r .pkgs $VAR_FILE | yq .[] |xargs `" && echo -e "DONE"

@@ -19,6 +19,7 @@ PB_PATH=$PWD/etc/ansible/playbooks/
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
+source $PWD/etc/env/playbooks
 
 SHORT_OPTS="i:t:sv"
 LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:"
