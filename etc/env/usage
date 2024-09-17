@@ -11,6 +11,7 @@ Options:
     -v, --verbose            Increase verbosity of ansible-playbook
     -t, --tags <tags>        Only run plays and tasks tagged with these values
     --os <ostack version>    Insert the version of openstack that you want to install. Default is 2024.1
+    -f, --force              Force run of playbooks without any condition. Used only in 'pb' command
 
 
 

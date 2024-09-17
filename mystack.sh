@@ -19,13 +19,14 @@ SKIP_INIT="no"
 VENV="./`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`/bin/activate"
 PB_PATH=$PWD/etc/ansible/playbooks/
 PB_PATH_SED=etc\\/ansible\\/playbooks\\/
+FORCE="false"
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
 source $PWD/etc/env/playbooks
 
-SHORT_OPTS="i:t:sv"
-LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:"
+SHORT_OPTS="i:t:svf"
+LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:,force"
 RAW_ARGS="$*"
 ARGS=$(getopt -o "${SHORT_OPTS}" -l "${LONG_OPTS}" --name "$0" -- "$@") || { usage >&2; exit 2; }
 
@@ -50,6 +51,10 @@ while [ "$#" -gt 0 ]; do
       (-i|--inventory)
               INVENTORY=$2
               shift 2
+              ;;
+      (-f|--force)
+              FORCE=true
+              shift 1
               ;;
       (--yes-i-really-really-mean-it)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --yes-i-really-really-mean-it"
@@ -129,7 +134,7 @@ while [ "$#" -gt 0 ]; do
           #[ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
           [ "$2" == "ls" ] && yq .myplaybooks $VAR_FILE && shift 2 && break
 
-          pb_chk
+          pb_chk $2
 
           [ $CMD_COUNT == 1 ] && pb_run "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" && shift 2 || { help_pb; exit 1; }
           ;;
