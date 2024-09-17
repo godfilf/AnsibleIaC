@@ -1,4 +1,4 @@
-function tunepb {
+function pb_tune {
 
   source $VENV
 
@@ -11,9 +11,23 @@ function tunepb {
 
 }
 
-function runpb {
+function pb_run {
 
   source $VENV
   ansible-playbook -i $INVENTORY $1
+
+}
+
+function pb_chk {
+
+  for COMMANDS in ${ALL_CMD[@]}; do
+    if echo $ARGS | grep "$COMMANDS" 1> /dev/null; then
+      CMD_COUNT=1 && return
+    fi
+  done
+
+  for PB_NAME in `echo $2 |sed -e 's/,/ /g'`; do 
+    [ "`yq 'IN(.myplaybooks[]; "'$PB_NAME'")' $VAR_FILE`" == "true" ] || { echo -e "Some Playbook does not exist: $PB_NAME\n"; exit 1; }
+  done
 
 }

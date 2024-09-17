@@ -124,17 +124,14 @@ while [ "$#" -gt 0 ]; do
           shift 1
           ;;
     (pb)
-          [ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
+          pb_tune
 
-          for COMMANDS in ${ALL_CMD[@]}; do
-            if echo $ARGS | grep "$COMMANDS" 1> /dev/null; then
-              CMD_COUNT=1 && break
-            fi
-          done
+          #[ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
+          [ "$2" == "ls" ] && yq .myplaybooks $VAR_FILE && shift 2 && break
 
-          [ $CMD_COUNT == 1 ] && runpb "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" && shift 2 || { help_pb; exit 1; }
-              
-          
+          pb_chk
+
+          [ $CMD_COUNT == 1 ] && pb_run "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" && shift 2 || { help_pb; exit 1; }
           ;;
     (*)     
           usage

@@ -22,7 +22,7 @@ check_virtualenv() {
 
   echo -e "\nCreating list of custom playbooks..."
 
-  tunepb
+  pb_tune
 
   echo -en "\nConfiguring right venv path... "
 
