@@ -34,6 +34,8 @@ eval set -- "$ARGS"
 
 echo -e "\nCheck Options...\n"
 
+[ $# -eq 1 ] && usage && exit 0
+
 while [ "$#" -gt 0 ]; do
     case "$1" in
       #(-l)
@@ -98,6 +100,8 @@ while [ "$#" -gt 0 ]; do
 done
 
 echo -e "Check Commands...\n"
+
+[ -z $@ ] && usage && exit 0 
 
 echo -e "\nArgs: $@ \n"
 
