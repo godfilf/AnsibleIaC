@@ -126,7 +126,7 @@ while [ "$#" -gt 0 ]; do
           ## Rimane da testare se le KOLLA_EXTRA_OPTS funzionano correttamente per tutte le ACTION
           [ "$SKIP_INIT" == "no" ] && install_local_required_pckgs && check_virtualenv
           [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
-          for action in install-deps bootstrap-servers prechecks deploy post-deploy; do
+          for action in install-deps bootstrap-servers prechecks pull deploy post-deploy; do
             echo -e "\n\n=== Start kolla-ansible $action ===\n\n"
             run_kolla $action "$KOLLA_EXTRA_OPTS"
           done
