@@ -2,6 +2,8 @@
 
 set -o errexit
 
+ALL_CMD=(install-deps bootstrap-servers prechecks deploy post-deploy prune-images destroy reconfigure pull initialize)
+CMD_COUNT=${#ALL_CMD[@]}
 OPENSTACK_RELEASE="2024.1"
 UPPER_CONSTRAINTS="https://raw.githubusercontent.com/openstack/requirements/stable/$OPENSTACK_RELEASE/upper-constraints.txt"
 VAR_FILE="etc/env/mystack_config.yaml"
@@ -92,6 +94,8 @@ done
 
 echo -e "Check Commands...\n"
 
+echo -e "\nArgs: $@ \n"
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     (initialize)
@@ -120,15 +124,17 @@ while [ "$#" -gt 0 ]; do
           shift 1
           ;;
     (pb)
-          for COMMANDS in initialize install-deps bootstrap-servers prechecks deploy post-deploy prune-images destroy reconfigure pull; do
-            [ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
+          [ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break
+
+          for COMMANDS in ${ALL_CMD[@]}; do
             if echo $ARGS | grep "$COMMANDS" 1> /dev/null; then
-              runpb "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*"
-            else
-              echo -e "\nYou can use 'pb' subcommands only with thise commands:\ninstall-deps \nbootstrap-servers \nprechecks \ndeploy \npost-deploy \nprune-images \ndestroy \nreconfigure \npull"
-              exit 1
+              CMD_COUNT=1 && break
             fi
           done
+
+          [ $CMD_COUNT == 1 ] && runpb "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" && shift 2 || { help_pb; exit 1; }
+              
+          
           ;;
     (*)     
           usage

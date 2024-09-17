@@ -42,3 +42,20 @@ Commands:
 EOF
 }
 
+function help_pb {
+
+  cat <<EOF
+You can use the subcommands of 'pb' only with thise commands:
+
+install-deps 
+bootstrap-servers 
+prechecks 
+deploy 
+post-deploy 
+prune-images 
+destroy 
+reconfigure 
+pull
+
+EOF
+}

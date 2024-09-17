@@ -1,0 +1,6 @@
+- name: Prova
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - ping:
