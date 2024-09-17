@@ -31,9 +31,13 @@ check_virtualenv() {
 }
 
 function fill_password_file {
+  source $VENV
 
   echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE";
   kolla-genpwd -p $CONF_DIR/$PASSWORD_FILE;
+
+  mv $CONF_DIR/$PASSWORD_FILE $INVENTORY
+  ln -s $INVENTORY$PASSWORD_FILE $CONF_DIR/$PASSWORD_FILE
 
 }
 

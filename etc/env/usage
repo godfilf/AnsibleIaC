@@ -29,7 +29,7 @@ Commands:
     prechecks            Do pre-deployment checks for hosts
     deploy               Deploy and start all kolla containers
     post-deploy          Do post deploy on deploy node
-    all-steps | all      Do in order :
+    all, all-steps       Do in order :
                            initialize; install-deps; bootstrap-servers; prechecks; deploy; post-deploy
     
     prune-images         Prune orphaned Kolla images
