@@ -165,3 +165,79 @@ drwxr-xr-x 2 root root 4096 Sep 16 15:36 nova
 ```
 ./mystack.sh all
 ```
+
+## Esecuzione di Playbooks custom
+
+
+E' possibile eseguire PB custom, inserendoli nel path `etc/kolla/playbooks`.
+Dopo di che sarà necessario lanciare `./mystack initialize` per permettere all script di popolare il file `vars.yaml`
+
+1. Situazione iniziale del file `vars.yaml`
+```
+# cat vars.yaml
+myplaybooks: []
+myvenv: venv
+pkgs:
+- git
+- python3-dev
+- libffi-dev
+- gcc
+- libssl-dev
+- python3-venv
+
+# 
+
+```
+
+2. Creazione/Inserimento dei playbooks
+```
+# cd etc/ansible/playbooks
+etc/ansible/playbooks# ls -l
+total 0
+etc/ansible/playbooks# 
+etc/ansible/playbooks# vi papero.yaml
+etc/ansible/playbooks# vi pippo.yml
+etc/ansible/playbooks# vi pluto.yml
+etc/ansible/playbooks# 
+etc/ansible/playbooks# ls -l
+total 12
+-rw-r--r-- 1 root root 69 Sep 16 17:48 papero.yaml
+-rw-r--r-- 1 root root 69 Sep 17 10:15 pippo.yml
+-rw-r--r-- 1 root root 69 Sep 18 15:17 pluto.yml
+etc/ansible/playbooks# 
+etc/ansible/playbooks# 
+```
+
+per un mero motivo di test, tutti i PB sono identici
+
+3. eseguire il comando `initialize` per popolare il file `vars.yaml`
+```
+# ./mystack.sh initialize 
+
+Check Options...
+
+Check Commands...
+
+
+Args: initialize 
+
+
+Load pkgs... 
+Installing needed OS PKGS... 
+...
+..
+.
+Creating list of custom playbooks...
+
+Configuring right venv path... DONE
+
+
+#
+```
+
+4. Adesso è possibile eseguire i pb personali nella posizione che meglio si desidera. Ad esempio
+```
+./mystack pb ls
+
+
+

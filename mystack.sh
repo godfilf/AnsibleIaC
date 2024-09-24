@@ -101,7 +101,8 @@ done
 
 echo -e "Check Commands...\n"
 
-[ -z $@ ] && usage && exit 0 
+CMD=$@
+[ -z ${CMD[0]} ] && usage && exit 0 
 
 echo -e "\nArgs: $@ \n"
 
@@ -117,7 +118,7 @@ while [ "$#" -gt 0 ]; do
           fill_password_file
           shift 1
           ;;
-    (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull)
+    (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull|mariadb_recovery)
   	  ACTION=$1
           run_kolla $1 "$KOLLA_EXTRA_OPTS"
           shift 1
