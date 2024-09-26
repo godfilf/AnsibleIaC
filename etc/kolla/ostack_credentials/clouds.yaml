@@ -1,7 +1,7 @@
 clouds:
   kolla-admin:
     auth:
-      auth_url: http://10.0.0.99:5000
+      auth_url: http://10.10.10.99:5000
       project_domain_name: Default
       user_domain_name: Default
       project_name: admin
@@ -10,7 +10,7 @@ clouds:
     region_name: RegionOne
   kolla-admin-system:
     auth:
-      auth_url: http://10.0.0.99:5000
+      auth_url: http://10.10.10.99:5000
       user_domain_name: Default
       system_scope: all
       username: admin
@@ -18,7 +18,7 @@ clouds:
     region_name: RegionOne
   kolla-admin-internal:
     auth:
-      auth_url: http://10.0.0.99:5000
+      auth_url: http://10.10.10.99:5000
       project_domain_name: Default
       user_domain_name: Default
       project_name: admin
@@ -28,7 +28,7 @@ clouds:
     region_name: RegionOne
   kolla-admin-system-internal:
     auth:
-      auth_url: http://10.0.0.99:5000
+      auth_url: http://10.10.10.99:5000
       user_domain_name: Default
       system_scope: all
       username: admin
