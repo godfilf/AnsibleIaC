@@ -102,7 +102,7 @@ done
 echo -e "Check Commands...\n"
 
 CMD=$@
-[ -z ${CMD[0]} ] && usage && exit 0 
+[ -z "${CMD[0]}" ] && usage && exit 0 
 
 echo -e "\nArgs: $@ \n"
 
