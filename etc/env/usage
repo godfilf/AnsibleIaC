@@ -40,6 +40,13 @@ Commands:
 
     pull                 Pull all images for containers (only pulls, no running container changes)
 
+Extra Usage:
+
+   Usage: EXTRA_OPTS="-e kolla_serial=1" $0 COMMAND [options]
+
+   kolla_serial          You can use this var to enable serial execution of ansible playbooks
+
+
 EOF
 }
 
