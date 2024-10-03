@@ -118,7 +118,7 @@ while [ "$#" -gt 0 ]; do
           fill_password_file
           shift 1
           ;;
-    (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull|mariadb_recovery)
+    (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull|mariadb_recovery|genconfig|validate-config)
   	  ACTION=$1
           run_kolla $1 "$KOLLA_EXTRA_OPTS"
           shift 1
