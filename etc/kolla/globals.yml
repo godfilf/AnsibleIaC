@@ -575,6 +575,9 @@ cinder_backend_ceph: "yes"
 # Designate options
 ###################
 # Valid options are [ bind9 ]
+## commentata la var designate_enable_notifications_sink per abilitare il processo di neutron che crea i recordset
+#designate_enable_notifications_sink: "yes"
+neutron_dns_integration: "yes"
 neutron_dns_domain: "ostack.cosmicnet."
 designate_backend: "bind9"
 designate_ns_record:
