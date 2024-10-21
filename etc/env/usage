@@ -40,6 +40,18 @@ Commands:
 
     pull                 Pull all images for containers (only pulls, no running container changes)
 
+
+Extra Commands:
+
+    pb                  Show a little internal usage. 
+  
+    pb -f		Force run Playbook/s without kolla actions
+    
+    pb ls               List all Playbooks lcoated in 'etc/ansible/playbooks/'
+
+    pb name,name,...    Run Playbook
+                    
+
 Extra Usage:
 
    Usage: EXTRA_OPTS="-e kolla_serial=1" $0 COMMAND [options]
