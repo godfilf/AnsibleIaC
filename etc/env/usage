@@ -29,6 +29,8 @@ Commands:
     prechecks            Do pre-deployment checks for hosts
     deploy               Deploy and start all kolla containers
     post-deploy          Do post deploy on deploy node
+    reconfigure          Reconfigure OpenStack service
+    stop                 Stop Kolla containers
     all, all-steps       Do in order :
                            initialize; install-deps; bootstrap-servers; prechecks; deploy; post-deploy
     
