@@ -42,6 +42,10 @@ Commands:
 
     pull                 Pull all images for containers (only pulls, no running container changes)
 
+    mariadb_recovery     Recover a completely stopped mariadb cluster
+    genconfig            Generate configuration files for enabled OpenStack services
+    validate-config      Validate configuration files for enabled OpenStack services
+    stop                 Stop Kolla containers
 
 Extra Commands:
 
