@@ -7,7 +7,7 @@ function pb_tune {
   ## Svuota l'elemento lista. Se non esiste, lo crea
   yq -Y -i '.myplaybooks = []' $VAR_FILE
 
-  for i in `ls $PB_PATH`; do yq -Y -i '.myplaybooks += ["'${i%.*}'"]' $VAR_FILE; done
+  for i in `ls -p $PB_PATH |grep -v '/$'`; do yq -Y -i '.myplaybooks += ["'${i%.*}'"]' $VAR_FILE; done
 
 }
 
