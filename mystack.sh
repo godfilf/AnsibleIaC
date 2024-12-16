@@ -19,7 +19,10 @@ SKIP_INIT="no"
 VENV="./`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`/bin/activate"
 PB_PATH=$PWD/etc/ansible/playbooks/
 PB_PATH_SED=etc\\/ansible\\/playbooks\\/
+PB_VERBOSE=""
+PB_NAME_EXT=""
 FORCE="false"
+MYVAULTFILE=$PWD/.vault_password_file
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
@@ -44,6 +47,7 @@ while [ "$#" -gt 0 ]; do
       #        ;;
       (-v|--verbose)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS -v"
+              PB_VERBOSE="$PB_VERBOSE $1"
               shift 1
               ;;
       (-t|--tags)
@@ -141,7 +145,14 @@ while [ "$#" -gt 0 ]; do
 
           pb_chk $2
 
-          [ $CMD_COUNT == 1 ] && pb_run "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" && shift 2 || { help_pb; exit 1; }
+          PB_EXIST=`echo $2 | tr ',' '\n' | xargs -I {} sh -c 'echo {}".yml\n"{}".yaml"' |sed -e 's/^/'$PB_PATH_SED'/g'`
+          for NAME in $PB_EXIST; do 
+            [ -e $NAME ] && PB_NAME_EXT="$PB_NAME_EXT $NAME"
+          done
+         
+          #[ $CMD_COUNT == 1 ] && pb_run "$PB_PATH$(echo $2 |sed -e 's/,/.* '$PB_PATH_SED'/g').*" "$PB_VERBOSE" && shift 2 || { help_pb; exit 1; }
+          [ $CMD_COUNT == 1 ] && pb_run "$PB_NAME_EXT" "$PB_VERBOSE" && shift 2 || { help_pb; exit 1; }
+          PB_NAME_EXT=""
           ;;
     (*)     
           usage

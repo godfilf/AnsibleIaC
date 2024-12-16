@@ -14,7 +14,15 @@ function pb_tune {
 function pb_run {
 
   source $VENV
-  ansible-playbook -i $INVENTORY $1 && return
+  echo -e "
+===========================================
+#  RUN CUSTOM PLAYBOOKS: $1 
+===========================================\n"
+  ansible-playbook --vault-password-file $MYVAULTFILE -i $INVENTORY $1 $2 && return
+  echo -e "
+===========================================
+#  END CUSTOM PLAYBOOKS: $1 
+===========================================\n"
 
   exit 1
 

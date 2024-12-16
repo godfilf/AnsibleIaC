@@ -51,7 +51,8 @@ PKGS="`awk '$1 == "-"{ if (key == "pkgs:") print $NF; next } {key=$1}' $VAR_FILE
 echo -e "\nInstalling needed OS PKGS... \n"
 for i in yum apt pkg dnf; do
   if which $i 1> /dev/null; then 
-    $i -y install $PKGS
+    /usr/bin/sudo $i -y install $PKGS
+#    $i -y install $PKGS
   fi
 done
 
