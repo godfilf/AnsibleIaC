@@ -1,0 +1,1 @@
+OPENSTACK_HEAT_STACK = {'enable_user_pass': False}
