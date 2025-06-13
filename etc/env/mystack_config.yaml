@@ -7,3 +7,4 @@ pkgs:
   - gcc
   - libssl-dev
   - python3-venv
+  - jq
