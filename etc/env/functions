@@ -33,11 +33,16 @@ check_virtualenv() {
 function fill_password_file {
   source $VENV
 
-  echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE";
-  kolla-genpwd -p $CONF_DIR/$PASSWORD_FILE;
+  echo -e "Remove old password link"
+  rm "$CONF_DIR/$PASSWORD_FILE" || true
+  cp "${INVENTORY}group_vars/all/$PASSWORD_FILE" "$CONF_DIR/$PASSWORD_FILE"
 
-  mv $CONF_DIR/$PASSWORD_FILE $INVENTORY
-  ln -s $INVENTORY$PASSWORD_FILE $CONF_DIR/$PASSWORD_FILE
+  echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE"
+  kolla-genpwd -p "$CONF_DIR/$PASSWORD_FILE"
+  
+  mv "$CONF_DIR/$PASSWORD_FILE" "${INVENTORY}group_vars/all/"
+  ln -s "${INVENTORY}group_vars/all/$PASSWORD_FILE" "$CONF_DIR/$PASSWORD_FILE"
+  
 
 }
 
@@ -71,7 +76,7 @@ EXTRA_OPTS=$ANSIBLE_EXTRA_OPTS   kolla-ansible $1 \
     --passwords $CONF_DIR/$PASSWORD_FILE \
     --configdir $CONF_DIR \
     --extra "node_custom_config=$CONF_DIR/config" \
-    --extra "CONFIG_DIR=$CUSTOM_CONF_DIR/" \
+    --extra "CONFIG_DIR=$CONF_DIR/" \
     $2
 
 }

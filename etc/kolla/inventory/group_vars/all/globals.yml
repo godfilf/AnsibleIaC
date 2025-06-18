@@ -1,8 +1,13 @@
 ---
 docker_disable_default_iptables_rules: yes
-network_interface: "eth0"
-neutron_external_interface: "eth1"
+network_interface: "enp5s0"
+neutron_external_interface: "enp6s0"
 neutron_plugin_agent: linuxbridge
+
+enable_chrony: "false"
+prechecks_enable_host_ntp_checks: false
+
+
 
 horizon_keystone_multidomain: yes
 
