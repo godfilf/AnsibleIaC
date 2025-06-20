@@ -1,0 +1,23 @@
+- name: default-bind
+  id: 7168e046-eb71-4b2d-aa40-eebbcec0a840
+  description: Default BIND9 Pool
+  attributes: {}
+  ns_records:
+    - hostname: ns1.ostack.cosmicnet.
+      priority: 1
+  nameservers:
+    - host: 192.168.20.10
+      port: 53
+  targets:
+    - type: bind9
+      description: BIND9 Server 192.168.20.10
+      masters:
+        - host: 192.168.20.10
+          port: 5354
+      options:
+        host: 192.168.20.10
+        port: 53
+        rndc_host: 192.168.20.10
+        rndc_port: 953
+        rndc_key_file: /etc/designate/rndc.key
+

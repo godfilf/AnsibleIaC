@@ -3,7 +3,7 @@
 [control]
 # These hostname must be resolvable from your deployment host
 control01 ansible_host=192.168.20.10
-#control02
+control02 ansible_host=192.168.20.11
 #control03
 
 # The above can also be specified as follows:
@@ -32,7 +32,7 @@ compute01 ansible_host=192.168.20.20
 control
 
 [deployment]
-localhost       ansible_connection=local
+#localhost       ansible_connection=local
 
 [baremetal:children]
 control
