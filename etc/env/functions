@@ -1,14 +1,14 @@
 check_virtualenv() {
-  VENV=`find . |grep "./*/bin/activate$" || echo ""`
-  if ! [ -z $VENV ]; then
-    for i in $VENV; do COUNT=$((COUNT+1)); done
-    if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV\n"; fi
+  VENV1=`find . |grep "./*/bin/activate$" || echo ""`
+  if ! [ -z $VENV1 ]; then
+    for i in $VENV1; do COUNT=$((COUNT+1)); done
+    if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV1 \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV1\n"; fi
   fi
 
-  if [ -f $VENV ] && ! [ -z $VENV ] ; then
-      echo -e "Virtual environment '$VENV' already exists. Aborting.\n"
+  if [ -f $VENV/bin/activate ] && ! [ -z $VENV ] ; then
+      echo -e "Virtual environment '$VENV1' already exists. Aborting.\n"
   else
-      VENV=./venv/bin/activate
+      #VENV=./venv/bin/activate
       echo "virtualenv is not installed. Installing..."
       python3 -m venv `echo $VENV | cut -d"/" -f2`
       echo -e "virtualenv installation complete. \nVENV name : $VENV\n"

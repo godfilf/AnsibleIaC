@@ -25,6 +25,10 @@ PB_NAME_EXT=""
 FORCE="false"
 MYVAULTFILE=$PWD/.vault_password_file
 
+if ! grep -Fxq "`echo $VENV | cut -d"/" -f2`/" .gitignore; then
+  echo "`echo $VENV | cut -d"/" -f2`/" >> .gitignore
+fi
+
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
 source $PWD/etc/env/playbooks
