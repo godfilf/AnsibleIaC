@@ -1,14 +1,14 @@
 check_virtualenv() {
-  ls -ld ./$VENV/bin/activate 2> /dev/null || VENV=`find . |grep "./*/bin/activate$" || echo ""`
-  if ! [ -z $VENV ]; then
-    for i in $VENV; do COUNT=$((COUNT+1)); done
-    if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV\n"; fi
+  VENV1=`find . |grep "./*/bin/activate$" || echo ""`
+  if ! [ -z $VENV1 ]; then
+    for i in $VENV1; do COUNT=$((COUNT+1)); done
+    if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV1 \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV1\n"; fi
   fi
 
-  if [ -f $VENV ] && ! [ -z $VENV ] ; then
-      echo -e "Virtual environment '$VENV' already exists. Aborting.\n"
+  if [ -f $VENV/bin/activate ] && ! [ -z $VENV ] ; then
+      echo -e "Virtual environment '$VENV1' already exists. Aborting.\n"
   else
-      VENV=./venv/bin/activate
+      #VENV=./venv/bin/activate
       echo "virtualenv is not installed. Installing..."
       python3 -m venv `echo $VENV | cut -d"/" -f2`
       echo -e "virtualenv installation complete. \nVENV name : $VENV\n"
@@ -69,25 +69,14 @@ function run_kolla {
 
 [ -e $VENV ] && source $VENV || { echo -e "\n## ERROR!!! ##\nCan't load VENV: $VENV \nYou have to run INITILIZE before to proceed...\n\nUsage:\n  $0 initialize\n\n"; exit 1; }
 
-#if [ $1 == "post-deploy" ]; then echo "etc/kolla/ostack_credentials/" >> .gitignore; mkdir -p $CRED_DIR; CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
-if [ "$1" == "post-deploy" ]; then
-  # Aggiungi al .gitignore solo se non già presente
-  if ! grep -Fxq "etc/kolla/ostack_credentials/" .gitignore; then
-    echo "etc/kolla/ostack_credentials/" >> .gitignore
-  fi
-  mkdir -p "$CRED_DIR"
-  CUSTOM_CONF_DIR="$CRED_DIR"
-else
-  CUSTOM_CONF_DIR="$CONF_DIR"
-fi
-
+if [ $1 == "post-deploy" ]; then CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
 
 EXTRA_OPTS=$ANSIBLE_EXTRA_OPTS   kolla-ansible $1 \
     --inventory $INVENTORY \
     --passwords $CONF_DIR/$PASSWORD_FILE \
     --configdir $CONF_DIR \
     --extra "node_custom_config=$CONF_DIR/config" \
-    --extra "CONFIG_DIR=$CUSTOM_CONF_DIR/" \
+    --extra "CONFIG_DIR=$CONF_DIR/" \
     $2
 
 }
