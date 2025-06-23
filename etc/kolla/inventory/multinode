@@ -3,7 +3,6 @@
 [control]
 # These hostname must be resolvable from your deployment host
 control01 ansible_host=192.168.20.10
-control02 ansible_host=192.168.20.11
 #control03
 
 # The above can also be specified as follows:

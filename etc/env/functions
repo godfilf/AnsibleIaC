@@ -70,7 +70,7 @@ function run_kolla {
 
 if [ "$1" == "post-deploy" ]; then
   # Aggiungi al .gitignore solo se non già presente
-  if ! grep -Fxq "`echo $CRED_DIR`" .gitignore; then
+  if ! grep -Fxq "`echo ${CRED_DIR#$PWD/}`" .gitignore; then
     echo "`echo ${CRED_DIR#$PWD/}`" >> .gitignore
   fi
   mkdir -p "$CRED_DIR"
