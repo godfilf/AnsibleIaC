@@ -2,7 +2,7 @@ myplaybooks:
 - papero
 - pippo
 - pluto
-myvenv: venv
+myvenv: vicVenv
 pkgs:
 - git
 - python3-dev
