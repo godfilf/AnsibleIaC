@@ -1,5 +1,5 @@
 check_virtualenv() {
-  VENV=`find . |grep "./*/bin/activate$" || echo ""`
+  ls -ld ./$VENV/bin/activate 2> /dev/null || VENV=`find . |grep "./*/bin/activate$" || echo ""`
   if ! [ -z $VENV ]; then
     for i in $VENV; do COUNT=$((COUNT+1)); done
     if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV\n"; fi
@@ -33,11 +33,16 @@ check_virtualenv() {
 function fill_password_file {
   source $VENV
 
-  echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE";
-  kolla-genpwd -p $CONF_DIR/$PASSWORD_FILE;
+  echo -e "Remove old password link"
+  rm "$CONF_DIR/$PASSWORD_FILE" || true
+  cp "${INVENTORY}group_vars/all/$PASSWORD_FILE" "$CONF_DIR/$PASSWORD_FILE"
 
-  mv $CONF_DIR/$PASSWORD_FILE $INVENTORY
-  ln -s $INVENTORY$PASSWORD_FILE $CONF_DIR/$PASSWORD_FILE
+  echo -e "\nGenerating Random Passwords for $CONF_DIR/$PASSWORD_FILE"
+  kolla-genpwd -p "$CONF_DIR/$PASSWORD_FILE"
+  
+  mv "$CONF_DIR/$PASSWORD_FILE" "${INVENTORY}group_vars/all/"
+  ln -s "${INVENTORY}group_vars/all/$PASSWORD_FILE" "$CONF_DIR/$PASSWORD_FILE"
+  
 
 }
 
@@ -64,7 +69,7 @@ function run_kolla {
 
 [ -e $VENV ] && source $VENV || { echo -e "\n## ERROR!!! ##\nCan't load VENV: $VENV \nYou have to run INITILIZE before to proceed...\n\nUsage:\n  $0 initialize\n\n"; exit 1; }
 
-if [ $1 == "post-deploy" ]; then CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
+if [ $1 == "post-deploy" ]; then mkdir -p CRED_DIR; CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
 
 EXTRA_OPTS=$ANSIBLE_EXTRA_OPTS   kolla-ansible $1 \
     --inventory $INVENTORY \

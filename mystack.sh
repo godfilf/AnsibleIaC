@@ -28,8 +28,8 @@ source $PWD/etc/env/functions
 source $PWD/etc/env/usage
 source $PWD/etc/env/playbooks
 
-SHORT_OPTS="i:t:svf"
-LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:,force"
+SHORT_OPTS="i:t:l:e:svf"
+LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:,force,limit:"
 RAW_ARGS="$*"
 ARGS=$(getopt -o "${SHORT_OPTS}" -l "${LONG_OPTS}" --name "$0" -- "$@") || { usage >&2; exit 2; }
 
@@ -41,10 +41,10 @@ echo -e "\nCheck Options...\n"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-      #(-l)
-      #        KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --limit $2"
-      #        shift 2
-      #        ;;
+      (-l|--limit)
+              KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --limit $2"
+              shift 2
+              ;;
       (-v|--verbose)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS -v"
               PB_VERBOSE="$PB_VERBOSE $1"
@@ -52,6 +52,10 @@ while [ "$#" -gt 0 ]; do
               ;;
       (-t|--tags)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --tags $2"
+              shift 2
+              ;;
+      (-e)
+              KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS -e $2"
               shift 2
               ;;
       (-i|--inventory)
