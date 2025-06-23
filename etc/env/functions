@@ -1,5 +1,5 @@
 check_virtualenv() {
-  VENV=`find . |grep "./*/bin/activate$" || echo ""`
+  ls -ld ./$VENV/bin/activate 2> /dev/null || VENV=`find . |grep "./*/bin/activate$" || echo ""`
   if ! [ -z $VENV ]; then
     for i in $VENV; do COUNT=$((COUNT+1)); done
     if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV\n"; fi
