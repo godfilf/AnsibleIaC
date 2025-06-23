@@ -1,4 +1,4 @@
 venv/
 *.log
-etc/kolla/ostack_credentials/
 2024Venv/
+etc/kolla/ostack_credentials_2024.1
