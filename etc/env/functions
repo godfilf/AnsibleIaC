@@ -1,6 +1,6 @@
 check_virtualenv() {
   VENV1=`find . |grep "./*/bin/activate$" || echo ""`
-  if ! [ -z $VENV1 ]; then
+  if ! [ -z "$VENV1" ]; then
     for i in $VENV1; do COUNT=$((COUNT+1)); done
     if [ "$FORCE" == "false" ]; then if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV1 \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV1\n"; fi; fi
   fi
@@ -68,7 +68,7 @@ function run_kolla {
 
 [ -e $VENV ] && source $VENV || { echo -e "\n## ERROR!!! ##\nCan't load VENV: $VENV \nYou have to run INITILIZE before to proceed...\n\nUsage:\n  $0 initialize\n\n"; exit 1; }
 
-if [ $1 == "post-deploy" ]; then CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
+if [ $1 == "post-deploy" ]; then mkdir -p $CRED_DIR; CUSTOM_CONF_DIR=$CRED_DIR; else CUSTOM_CONF_DIR=$CONF_DIR; fi
 
 EXTRA_OPTS=$ANSIBLE_EXTRA_OPTS   kolla-ansible $1 \
     --inventory $INVENTORY \
