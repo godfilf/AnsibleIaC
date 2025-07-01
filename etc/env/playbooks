@@ -5,7 +5,7 @@ function pb_tune {
   ## cancella definitivamente l'elemento lista
   ##     yq -Y -i 'del(.myplaybooks)' $VAR_FILE
   ## Svuota l'elemento lista. Se non esiste, lo crea
-  yq -Y -i '.myplaybooks = []' $VAR_FILE
+  $VENV_BIN/yq -Y -i '.myplaybooks = []' $VAR_FILE
 
   for i in `ls -p $PB_PATH |grep -v '/$'`; do yq -Y -i '.myplaybooks += ["'${i%.*}'"]' $VAR_FILE; done
 

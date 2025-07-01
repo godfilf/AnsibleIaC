@@ -5,10 +5,12 @@ set -o errexit
 ALL_CMD=(install-deps bootstrap-servers prechecks deploy post-deploy prune-images destroy reconfigure pull initialize)
 CMD_COUNT=${#ALL_CMD[@]}
 OPENSTACK_RELEASE="2024.1"
+#OPENSTACK_RELEASE="victoria"
 UPPER_CONSTRAINTS="https://raw.githubusercontent.com/openstack/requirements/stable/$OPENSTACK_RELEASE/upper-constraints.txt"
+#UPPER_CONSTRAINTS="https://opendev.org/openstack/requirements/raw/branch/unmaintained/$OPENSTACK_RELEASE/upper-constraints.txt"
 VAR_FILE="etc/env/mystack_config.yaml"
 CONF_DIR=$PWD/etc/kolla
-CRED_DIR=$PWD/etc/kolla/ostack_credentials
+CRED_DIR=$PWD/etc/kolla/ostack_credentials_$OPENSTACK_RELEASE
 PASSWORD_FILE=passwords.yml
 #INVENTORY=$PWD/etc/kolla/multinode
 INVENTORY=$PWD/etc/kolla/inventory/
@@ -23,6 +25,10 @@ PB_VERBOSE=""
 PB_NAME_EXT=""
 FORCE="false"
 MYVAULTFILE=$PWD/.vault_password_file
+
+if ! grep -Fxq "`echo $VENV | cut -d"/" -f2`/" .gitignore; then
+  echo "`echo $VENV | cut -d"/" -f2`/" >> .gitignore
+fi
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
