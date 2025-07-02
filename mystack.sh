@@ -25,6 +25,8 @@ PB_VERBOSE=""
 PB_NAME_EXT=""
 FORCE="false"
 MYVAULTFILE=$PWD/.vault_password_file
+REQUIREMENTS_FILE="requirement.txt"
+
 
 if ! grep -Fxq "`echo $VENV | cut -d"/" -f2`/" .gitignore; then
   echo "`echo $VENV | cut -d"/" -f2`/" >> .gitignore
@@ -112,6 +114,9 @@ while [ "$#" -gt 0 ]; do
               ;;
   esac
 done
+
+# Sostituisci la riga di kolla-ansible con la versione desiderata
+sed -i -E "s|^git\+https://opendev.org/openstack/kolla-ansible@stable/.*|git+https://opendev.org/openstack/kolla-ansible@stable/$OPENSTACK_RELEASE|" "$REQUIREMENTS_FILE"
 
 echo -e "Check Commands...\n"
 
