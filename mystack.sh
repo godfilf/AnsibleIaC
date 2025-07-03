@@ -18,26 +18,22 @@ INVENTORYFILE=
 ANSIBLE_EXTRA_OPTS="$EXTRA_OPTS"
 KOLLA_EXTRA_OPTS=""
 SKIP_INIT="no"
-VENV="./`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`/bin/activate"
 PB_PATH=$PWD/etc/ansible/playbooks/
 PB_PATH_SED=etc\\/ansible\\/playbooks\\/
 PB_VERBOSE=""
 PB_NAME_EXT=""
 FORCE="false"
+SKIP_VENV_CHK="false"
 MYVAULTFILE=$PWD/.vault_password_file
 REQUIREMENTS_FILE="requirement.txt"
 
-
-if ! grep -Fxq "`echo $VENV | cut -d"/" -f2`/" .gitignore; then
-  echo "`echo $VENV | cut -d"/" -f2`/" >> .gitignore
-fi
 
 source $PWD/etc/env/functions
 source $PWD/etc/env/usage
 source $PWD/etc/env/playbooks
 
-SHORT_OPTS="i:t:l:e:svf"
-LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:,force,limit:"
+SHORT_OPTS="i:t:l:e:F:svfUS"
+LONG_OPTS="help,fill,yes-i-really-really-mean-it,include-images,include-dev,skip-initialize,inventory:,verbose,tags:,os:,force,limit:,use-vault:,vault-file,skip-venv-chk"
 RAW_ARGS="$*"
 ARGS=$(getopt -o "${SHORT_OPTS}" -l "${LONG_OPTS}" --name "$0" -- "$@") || { usage >&2; exit 2; }
 
@@ -49,6 +45,17 @@ echo -e "\nCheck Options...\n"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
+      (-S|--skip-venv-chk)
+              SKIP_VENV_CHK="true"
+              ;;
+      (-F|--vault-file)
+              MYVAULTFILE="$2"
+              shift 2
+              ;;
+      (-U|--use-vault)
+              USE_VAULT="true"
+              shift 1
+              ;;
       (-l|--limit)
               KOLLA_EXTRA_OPTS="$KOLLA_EXTRA_OPTS --limit $2"
               shift 2
@@ -120,6 +127,18 @@ sed -i -E "s|^git\+https://opendev.org/openstack/kolla-ansible@stable/.*|git+htt
 
 echo -e "Check Commands...\n"
 
+MYVENV="`awk '$1 == "myvenv:"{ print $2 }' $VAR_FILE`"
+if [ -d $MYVENV ]; then
+  VENV="./$MYVENV/bin/activate"
+else 
+  VENV="./$MYVENV/bin/activate"
+  check_virtualenv
+fi
+
+if ! grep -Fxq "`echo $VENV | cut -d"/" -f2`/" .gitignore; then
+  echo "`echo $VENV | cut -d"/" -f2`/" >> .gitignore
+fi
+
 CMD=$@
 [ -z "${CMD[0]}" ] && usage && exit 0 
 
@@ -128,6 +147,7 @@ echo -e "\nArgs: $@ \n"
 while [ "$#" -gt 0 ]; do
   case "$1" in
     (initialize)
+          echo -e "\n\n=== Start $1 ===\n\n"
           install_local_required_pckgs
           check_virtualenv
           [ "$FILL_PASSWORD" == "yes" ] && fill_password_file
@@ -138,6 +158,7 @@ while [ "$#" -gt 0 ]; do
           shift 1
           ;;
     (install-deps|bootstrap-servers|prechecks|deploy|post-deploy|prune-images|destroy|reconfigure|pull|mariadb_recovery|genconfig|validate-config|stop)
+          echo -e "\n\n=== Start $1 ===\n\n"
   	  ACTION=$1
           run_kolla $1 "$KOLLA_EXTRA_OPTS"
           shift 1
@@ -153,6 +174,7 @@ while [ "$#" -gt 0 ]; do
           shift 1
           ;;
     (pb)
+          echo -e "\n\n=== Run Custom Playbooks ===\n\n"
           pb_tune
 
           #[ "$2" == "ls" ] && ls -l $PB_PATH && shift 2 && break

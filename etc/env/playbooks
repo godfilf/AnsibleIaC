@@ -5,7 +5,8 @@ function pb_tune {
   ## cancella definitivamente l'elemento lista
   ##     yq -Y -i 'del(.myplaybooks)' $VAR_FILE
   ## Svuota l'elemento lista. Se non esiste, lo crea
-  $VENV_BIN/yq -Y -i '.myplaybooks = []' $VAR_FILE
+  #$VENV_BIN/yq -Y -i '.myplaybooks = []' $VAR_FILE
+  $VIRTUAL_ENV/bin/yq -Y -i '.myplaybooks = []' $VAR_FILE
 
   for i in `ls -p $PB_PATH |grep -v '/$'`; do yq -Y -i '.myplaybooks += ["'${i%.*}'"]' $VAR_FILE; done
 
@@ -18,7 +19,8 @@ function pb_run {
 ===========================================
 #  RUN CUSTOM PLAYBOOKS: $1 
 ===========================================\n"
-  ansible-playbook --vault-password-file $MYVAULTFILE -i $INVENTORY $1 $2 && return
+  if [ -n "${USE_VAULT+x}" ] && [ $USE_VAULT == "true" ]; then VAULT_PARAM="--vault-password-file $MYVAULTFILE"; else VAULT_PARAM=""; fi
+  ansible-playbook $VAULT_PARAM -i $INVENTORY $1 $2 && return
   echo -e "
 ===========================================
 #  END CUSTOM PLAYBOOKS: $1 
