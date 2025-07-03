@@ -1,6 +1,6 @@
 check_virtualenv() {
   VENV1=`find . |grep "./*/bin/activate$" || echo ""`
-  if ! [ -z "$VENV1" ]; then
+  if ! [ -z "$VENV1" ] && [ "$FORCE" != "true" ] && [ $SKIP_VENV_CHK == "false" ]; then
     for i in $VENV1; do COUNT=$((COUNT+1)); done
     if [ "$FORCE" == "false" ]; then if [ $COUNT -gt 1 ]; then echo -e "hai più di un VENV : \n$VENV1 \n\nRimuovine uno e rilancia : $0"; exit; else echo -e "Detected VENV : $VENV1\n"; fi; fi
   fi
@@ -15,7 +15,7 @@ check_virtualenv() {
 
   echo -e "\nInstall pip packages...\n"
   
-  VENV_BIN="$(echo $VENV | cut -d"/" -f2)/bin"
+  export VENV_BIN="$(echo $VENV | cut -d"/" -f2)/bin"
   $VENV_BIN/pip install -U pip
   $VENV_BIN/pip install -c $UPPER_CONSTRAINTS -r requirement.txt
 

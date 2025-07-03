@@ -3,15 +3,19 @@ function usage {
 Usage: $0 COMMAND [options]
 
 Options:
-    --fill                   Used only with 'initialize' and 'all-steps' commands. 
-                             Fill password file with random password
+    --fill                    Used only with 'initialize' and 'all-steps' commands. 
+                              Fill password file with random password
 
-    -s, --skip-initialize    Skip initialize step, during all-steps execution
-    -i, --inventory          Specify a different inventory file. Default 'etc/kolla/multinode'
-    -v, --verbose            Increase verbosity of ansible-playbook
-    -t, --tags <tags>        Only run plays and tasks tagged with these values
-    --os <ostack version>    Insert the version of openstack that you want to install. Default is 2024.2
-    -f, --force              Force run of playbooks without any condition. Used only in 'pb' command
+    -s, --skip-initialize     Skip initialize step, during all-steps execution
+    -i, --inventory <path>    Specify a different inventory file. Default 'etc/kolla/multinode'
+    -v, --verbose             Increase verbosity of ansible-playbook
+    -t, --tags <tags>         Only run plays and tasks tagged with these values
+    -e <extra variable>       Set additional variables as key=value or YAML/JSON passed to ansible-playbook
+    --os <ostack version>     Insert the version of openstack that you want to install. Default is 2024.2
+    -f, --force               Force run of playbooks without any condition. Used only in 'pb' command
+    -F, --vault-file <path>   Set the path of the vault-file. The default pat is '$PWD/.vault_password_file'
+    -U, --use-vault           Enable ansible to use the vault file. default is 'FALSE'
+    -S, --skip-venv-chk       Skip the venv check if already exists or if you have more than one venv
 
 
 
