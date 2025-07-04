@@ -12,8 +12,10 @@ VAR_FILE="etc/env/mystack_config.yaml"
 CONF_DIR=$PWD/etc/kolla
 CRED_DIR=$PWD/etc/kolla/ostack_credentials_$OPENSTACK_RELEASE
 PASSWORD_FILE=passwords.yml
+GLOBALS_FILE=globals.yml
 #INVENTORY=$PWD/etc/kolla/multinode
 INVENTORY=$PWD/etc/kolla/inventory/
+GROUP_VARS=group_vars/all
 INVENTORYFILE=
 ANSIBLE_EXTRA_OPTS="$EXTRA_OPTS"
 KOLLA_EXTRA_OPTS=""
@@ -75,6 +77,8 @@ while [ "$#" -gt 0 ]; do
               ;;
       (-i|--inventory)
               INVENTORY=$2
+              # Aggiungi "/" finale se non presente
+              [[ "${INVENTORY}" != */ ]] && INVENTORY="${INVENTORY}/"
               shift 2
               ;;
       (-f|--force)

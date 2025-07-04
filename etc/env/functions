@@ -66,6 +66,20 @@ echo -e "DONE"
 
 function run_kolla {
 
+SRC="${INVENTORY}group_vars/all/$GLOBALS_FILE"
+DST="$CONF_DIR/inventory/$GROUP_VARS/$GLOBALS_FILE"
+
+# Risolve i path assoluti normalizzati (symlink, ../, ecc.)
+ABS_SRC=$(readlink -f "$SRC")
+ABS_DST=$(readlink -f "$DST")
+
+# Esegui cp solo se sono file diversi
+if [[ "$ABS_SRC" != "$ABS_DST" ]]; then
+    cp "$SRC" "$DST"
+else
+    echo "Skip: uso global file unificato!"
+fi
+
 [ -e $VENV ] && source $VENV || { echo -e "\n## ERROR!!! ##\nCan't load VENV: $VENV \nYou have to run INITILIZE before to proceed...\n\nUsage:\n  $0 initialize\n\n"; exit 1; }
 
 if [ "$1" == "post-deploy" ]; then
